@@ -1,10 +1,10 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include "AM230.h"
+#include "ty_AM230.cpp"
 
 
 
-AM2320 mySensor;  // Sensor object
+ty_AM2320 mySensor;  // Sensor object
 
 void setup() {
 
@@ -25,8 +25,8 @@ void setup() {
 
 void loop() {
     int start = micros();
-    mySensor._readReg(0x00, 0x02); // Reading the humidity(?) register 
+    mySensor.read(); 
     
-    printf("in %dus \n", micros() - start);  // Prints the time it took to read
-    delay(1000);
+    printf("%f%% in %dus \n", mySensor.getHumidity(), micros() - start);  // Prints the time it took to read
+    delay(2000);
 }

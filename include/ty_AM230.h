@@ -1,5 +1,3 @@
-#pragma once
-
 #include <Arduino.h>
 #include <Wire.h>
 
@@ -18,25 +16,41 @@
 
 #define READ_REG_COMMAND 0x03
 
+//  allows to overrule AM232X_INVALID_VALUE e.g. to prevent spike in graphs.
+#ifndef AM2320_INVALID_VALUE
+#define AM2320_INVALID_VALUE                  -999
+#endif
+
 const uint8_t AM2320_ADDRESS = 0x5c;
 
 
-class AM2320 {
+class ty_AM2320 {
 
     public:
 
 
         TwoWire *_wire = &Wire;  // For some reason needs to be a pointer
-        uint8_t _bits[8]; // Buffer to hold raw data
         
         bool isConnected();
 
         bool begin();
 
+        int read();
+
         // address: 0x5c
         // fuction code 0x03
-        //starting address
         int _readReg(uint8_t reg, uint8_t count);
 
         int _getData(uint8_t length);
+
+        uint16_t _crc16(uint8_t *ptr, uint8_t len);
+
+        float getHumidity();
+
+
+        float _humidity = 0.0;
+        uint32_t _lastRead      = 0;
+        uint16_t _readDelay     = 2000;
+        float    _temperature   = 0.0;
+        uint8_t _bits[8]; // Buffer to hold raw data
 };
