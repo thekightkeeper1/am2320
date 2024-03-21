@@ -1,3 +1,5 @@
+#ifndef TY_AM2320_H
+
 #include <Arduino.h>
 #include <Wire.h>
 
@@ -54,3 +56,5 @@ class ty_AM2320 {
         float    _temperature   = 0.0;
         uint8_t _bits[8]; // Buffer to hold raw data
 };
+
+#endif

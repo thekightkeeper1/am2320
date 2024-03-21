@@ -1,14 +1,16 @@
 #include <Arduino.h>
 #include <Wire.h>
+
 #include "ty_AM230.cpp"
 
 
 
 ty_AM2320 mySensor;  // Sensor object
 
+
 void setup() {
 
-    // Beging UART serial and I2C serial
+    // Beginning UART serial and I2C serial
     Serial.begin(115200);
     Wire.begin();
     delay(100);
