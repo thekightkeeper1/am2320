@@ -1,5 +1,6 @@
 #ifndef TY_AM2320_H
 
+
 #include <Arduino.h>
 #include <Wire.h>
 
@@ -16,14 +17,14 @@
 #define AM2320_MISSING_BYTES            -19
 #define AM2320_READ_TOO_FAST            -20
 
-#define READ_REG_COMMAND 0x03
+// #define READ_REG_COMMAND 0x03
 
 //  allows to overrule AM232X_INVALID_VALUE e.g. to prevent spike in graphs.
 #ifndef AM2320_INVALID_VALUE
 #define AM2320_INVALID_VALUE                  -999
 #endif
 
-const uint8_t AM2320_ADDRESS = 0x5c;
+// const uint8_t AM2320_ADDRESS = 0x5c;
 
 
 class ty_AM2320 {
@@ -48,12 +49,15 @@ class ty_AM2320 {
         uint16_t _crc16(uint8_t *ptr, uint8_t len);
 
         float getHumidity();
+        float getTemperature();
 
-
+    
+    
+    protected:
         float _humidity = 0.0;
+        float _temperature = 0.0;
         uint32_t _lastRead      = 0;
         uint16_t _readDelay     = 2000;
-        float    _temperature   = 0.0;
         uint8_t _bits[8]; // Buffer to hold raw data
 };
 

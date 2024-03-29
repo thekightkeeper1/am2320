@@ -29,6 +29,6 @@ void loop() {
     int start = micros();
     mySensor.read(); 
     
-    printf("%f%% in %dus \n", mySensor.getHumidity(), micros() - start);  // Prints the time it took to read
+    printf("Its %.2f%% humidity and %.2f degs Celcius \n", mySensor.getHumidity(), mySensor.getTemperature());  // Prints the time it took to read
     delay(2000);
 }

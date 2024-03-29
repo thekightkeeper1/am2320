@@ -1,6 +1,7 @@
 #include "ty_AM230.h"
 
 
+
 bool ty_AM2320::begin() {
   if (!isConnected()) return false;
   return true;
@@ -17,7 +18,7 @@ bool ty_AM2320::isConnected()
       // These next two lines start and stop an empty transmission
       // If the transmission was successful it is assumed the i2c device
       // Is currently connected
-      _wire->beginTransmission(AM2320_ADDRESS);
+      _wire->beginTransmission(0x5c);
       if ( _wire->endTransmission() == 0) return true;
       yield();  // So that freeRTOS can do otherstuff
       delayMicroseconds(100);  // Delays in micros and not millis
@@ -89,7 +90,7 @@ int ty_AM2320::read() {
 }
 
 
-int ty_AM2320::_readReg(uint8_t reg, uint8_t count) {
+int ty_AM2320::_readReg(uint8_t regToRead, uint8_t count) {
 
   /*
     1. Wake up the sensor
@@ -101,13 +102,15 @@ int ty_AM2320::_readReg(uint8_t reg, uint8_t count) {
 
     // Wake up the sensor by doing an empty i2c transmission
     if (!isConnected()) return AM2320_ERROR_CONNECT;
+    int rv = -1;
 
     // Requesting the data
-    _wire->beginTransmission(AM2320_ADDRESS);  // Initiates i2c transmission, handles sending slave adress header
-    _wire->write(READ_REG_COMMAND);  // Command code (reading regs)
-    _wire->write(reg);  // Start register
-    _wire->write(count);  // Number of registers to read from
-    int rv = _wire->endTransmission(); // Sends queued data and STOP, also stores error code (0 is good)
+    // _wire->();                      // TODO The function that starts a M->S transaction
+    // _wire->write();                 // TODO Command code that tells AM2320 to read registers
+    // _wire->write();                 // TODO fill in with the start reg that needs to be read
+    // _wire->write();                 // TODO Number of regs that store the humidity + temp data
+    //                                 // TODO The function that ends the transmssion (look up Wire documentation)
+    // int rv = _wire->;               
     if (rv < 0) return rv;  // Negative values are bad error codes
 
     // command + datalen + data + CRC
@@ -119,6 +122,7 @@ int ty_AM2320::_readReg(uint8_t reg, uint8_t count) {
 
 
 int ty_AM2320::_getData(uint8_t length) {
+  int bytes = 0;
 
   /*
     This function assumes that a request has already been sent, the the 
@@ -135,7 +139,10 @@ int ty_AM2320::_getData(uint8_t length) {
     // i2c protocl to send ACK and read bytes when neccessary.
     // the read bytes are stored in a buffer, that is accessed with 
     // wire->read and wire->available methods
-    int bytes = _wire->requestFrom(AM2320_ADDRESS, length);
+
+    // bytes = _wire->requestFrom();  // TODO: Use the following function, as well as the length and address to request the 4 temp and humidty registers
+    // Function: https://www.arduino.cc/reference/en/language/functions/communication/wire/requestfrom/
+    
 
     if (bytes == 0) return AM2320_ERROR_CONNECT;
     Serial.printf("successfully read %d bytes\n", bytes);
@@ -196,6 +203,10 @@ uint16_t ty_AM2320::_crc16(uint8_t *ptr, uint8_t len)
 
 float ty_AM2320::getHumidity() {
   return _humidity;
+}
+
+float ty_AM2320::getTemperature() {
+  return _temperature;
 }
 
 
