@@ -105,12 +105,11 @@ int ty_AM2320::_readReg(uint8_t regToRead, uint8_t count) {
     int rv = -1;
 
     // Requesting the data
-    // _wire->();                      // TODO The function that starts a M->S transaction
-    // _wire->write();                 // TODO Command code that tells AM2320 to read registers
-    // _wire->write();                 // TODO fill in with the start reg that needs to be read
-    // _wire->write();                 // TODO Number of regs that store the humidity + temp data
-    //                                 // TODO The function that ends the transmssion (look up Wire documentation)
-    // int rv = _wire->;               
+    _wire->beginTransmission(0x5c);     // TODO The function that starts a M->S transaction
+    _wire->write(0x03);                 // TODO Command code that tells AM2320 to read registers
+    _wire->write(0x00);                 // TODO fill in with the start reg that needs to be read
+    _wire->write(0x04);                 // TODO Number of regs that store the humidity + temp data                       
+    rv = _wire->endTransmission();  // TODO The function that ends the transmssion (look up Wire documentation)
     if (rv < 0) return rv;  // Negative values are bad error codes
 
     // command + datalen + data + CRC
@@ -140,7 +139,7 @@ int ty_AM2320::_getData(uint8_t length) {
     // the read bytes are stored in a buffer, that is accessed with 
     // wire->read and wire->available methods
 
-    // bytes = _wire->requestFrom();  // TODO: Use the following function, as well as the length and address to request the 4 temp and humidty registers
+    bytes = _wire->requestFrom(0x5c, length);  // TODO: Add the address of the humidity sensor
     // Function: https://www.arduino.cc/reference/en/language/functions/communication/wire/requestfrom/
     
 
